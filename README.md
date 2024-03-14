@@ -2,8 +2,13 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
-
+>
+1. Pull in terminal
+```
+git clone https://github.com/bforbilly24/final-project-nextjs-frontend-app.git
+```
+>
+2.Installation
 ```bash
 npm run dev
 # or
@@ -20,17 +25,8 @@ You can start editing the page by modifying `app/page.js`. The page auto-updates
 
 This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
 
-## Learn More
+## Preview
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+<img width="1200" alt="rkks_pens_auth_login" src="https://github.com/bforbilly24/final-project-nextjs-frontend-app/assets/93701344/cb5898cf-1240-42a0-9581-a54c570ff542">
+      <img width="1200" alt="rkks_pens_dashboard_home" src="https://github.com/bforbilly24/final-project-nextjs-frontend-app/assets/93701344/4b7996c8-82f9-4d8a-9f40-38df6fcb41b9">
+      <img width="1200" alt="rkks_pens_dashboard_rkks" src="https://github.com/bforbilly24/final-project-nextjs-frontend-app/assets/93701344/2b8243fb-ab96-490f-86ad-4f921a67ac2a">
