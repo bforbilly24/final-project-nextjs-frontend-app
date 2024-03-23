@@ -8,51 +8,44 @@ import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '.
 import { DataTablePagination } from './data-table-pagination';
 
 function DataTable({ filterFocus, searchPlaceholder, filters }) {
-    const [data, setData] = useState([]);
-    const [viewOptions, setViewOptions] = useState([]);
-    const api = process.env.NEXT_PUBLIC_API_URL;
+	const [data, setData] = useState([]);
+	const [viewOptions, setViewOptions] = useState([]);
+	const api = process.env.NEXT_PUBLIC_API_URL;
 
-    useEffect(() => {
+	useEffect(() => {
         const fetchData = async () => {
-            try {
-                const response = await fetch(api);
-                if (!response.ok) {
-                    throw new Error('Failed to fetch data');
-                }
-                const jsonData = await response.json();
-                setData(jsonData.c_akun);
-
-                // Initialize viewOptions with the keys from the first item in the data
-                const keys = Object.keys(jsonData.c_akun[0]);
-                setViewOptions(keys.map((key, index) => ({
-                    key,
-                    checked: index < 12, // Only the first 12 keys are checked
-                })));
-            } catch (error) {
-                console.error('Failed to fetch data:', error);
+            const response = await fetch(api);
+            const jsonData = await response.json();
+            const dataArray = [].concat(...Object.values(jsonData.original));
+            setData(dataArray);
+    
+            if (dataArray.length > 0) {
+                const keys = Object.keys(dataArray[0]);
+                setViewOptions(
+                    keys.map((key, index) => ({
+                        key,
+                        checked: index < 12, // Only the first 12 keys are checked
+                    })),
+                );
             }
         };
-
+    
         fetchData();
     }, [api]);
 
-    const handleViewOptionChange = (key, checked) => {
-        setViewOptions(prevOptions =>
-            prevOptions.map(option =>
-                option.key === key ? { ...option, checked } : option
-            )
-        );
-    };
+	const handleViewOptionChange = (key, checked) => {
+		setViewOptions((prevOptions) => prevOptions.map((option) => (option.key === key ? { ...option, checked } : option)));
+	};
 
-    if (!data || data.length === 0) {
-        return <div>No data available</div>;
-    }
+	if (!data || data.length === 0) {
+		return <div>No data available</div>;
+	}
 
-    const visibleKeys = viewOptions.filter(option => option.checked).map(option => option.key);
+	const visibleKeys = viewOptions.filter((option) => option.checked).map((option) => option.key);
 
 	return (
 		<>
-            <DataTableToolbar data={data} filterFocus={filterFocus} searchPlaceholder={searchPlaceholder} filters={filters} visibleKeys={visibleKeys} onViewOptionChange={handleViewOptionChange} />
+			{data && data.length > 0 && <DataTableToolbar data={data} filterFocus={filterFocus} searchPlaceholder={searchPlaceholder} filters={filters} visibleKeys={visibleKeys} onViewOptionChange={handleViewOptionChange} />}
 			<ScrollArea>
 				<div className='space-y-4'>
 					<div className='rounded-md border'>
@@ -65,19 +58,20 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{data.map((item, rowIndex) => (
-									<TableRow key={rowIndex}>
-										{visibleKeys.map((key, cellIndex) => (
-											<TableCell key={cellIndex}>{typeof item[key] === 'object' ? JSON.stringify(item[key]) : item[key]}</TableCell>
-										))}
-									</TableRow>
-								))}
+								{Array.isArray(data) &&
+									data.map((item, rowIndex) => (
+										<TableRow key={rowIndex}>
+											{visibleKeys.map((key, cellIndex) => (
+												<TableCell key={cellIndex}>{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</TableCell>
+											))}
+										</TableRow>
+									))}
 							</TableBody>
 						</Table>
 					</div>
 				</div>
 			</ScrollArea>
-            <DataTablePagination viewOptions={viewOptions} onViewOptionChange={handleViewOptionChange} />
+			<DataTablePagination viewOptions={viewOptions} onViewOptionChange={handleViewOptionChange} />
 		</>
 	);
 }
