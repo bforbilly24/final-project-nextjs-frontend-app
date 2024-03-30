@@ -5,6 +5,8 @@ import { DataTableToolbar } from './data-table-toolbar';
 import { ScrollArea } from '../shadcn/ui/scroll-area';
 import { Table, TableHeader, TableBody, TableRow, TableHead, TableCell } from '../shadcn/ui/table';
 import { DataTablePagination } from './data-table-pagination';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
+import { Badge } from '../shadcn/ui/badge';
 
 function DataTable({ filterFocus, searchPlaceholder, filters }) {
 	const [data, setData] = useState([]);
@@ -75,7 +77,22 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 									? filteredData.map((item, rowIndex) => (
 											<TableRow key={rowIndex}>
 												{visibleKeys.map((key, cellIndex) => (
-													<TableCell key={cellIndex}>{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</TableCell>
+													<TableCell key={cellIndex}>
+														<TooltipProvider delayDuration={0}>
+															<Tooltip>
+																<TooltipTrigger asChild>
+																	<div className='truncate'>{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</div>
+																</TooltipTrigger>
+																<TooltipContent>
+																	<span>
+																		<Badge className='cursor-pointer px-1'>
+																			{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
+																		</Badge>
+																	</span>
+																</TooltipContent>
+															</Tooltip>
+														</TooltipProvider>
+													</TableCell>
 												))}
 											</TableRow>
 										))
