@@ -3,10 +3,43 @@
 import { PlusCircledIcon, Cross2Icon } from '@radix-ui/react-icons';
 import { Button } from '../shadcn/ui/button';
 import { Input } from '../shadcn/ui/input';
-import { DataTableFacetedFilter } from './data-table-faceted-filter';
 import { DataTableViewOptions } from './data-table-view-options';
-import { DataTableFilterOptions } from './data-table-filter-options';
 import { useRef } from 'react';
+
+async function handleFileUpload(event) {
+	const file = event.target.files[0];
+	if (file) {
+		// Check the file type
+		if (file.type !== 'text/xml' && file.type !== 'application/xml') {
+			alert('Invalid file type, please select an XML file.');
+			return;
+		}
+
+		// Create a FormData instance
+		const formData = new FormData();
+		// Append the file to the FormData instance
+		formData.append('rkks_xml', file);
+
+		// Send the file to the backend
+		const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rkks-create`, {
+			method: 'POST',
+			body: formData,
+		}).catch((error) => console.error('Error:', error));
+
+		// Log the response
+		console.log(await response.text());
+
+		// Check the response
+		if (!response.ok) {
+			alert('File upload failed');
+			return;
+		}
+
+		// Clear the file input
+		event.target.value = '';
+		alert('File uploaded successfully');
+	}
+}
 
 function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visibleKeys, onViewOptionChange, searchTerm, onSearchChange }) {
 	const allColumnHeaders = data && data.length > 0 ? Object.keys(data[0]) : [];
@@ -32,53 +65,15 @@ function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visib
 	return (
 		<div className='disabled:curs flex items-center justify-between'>
 			<div className='flex flex-1 items-center space-x-5'>
-				<Input placeholder={searchPlaceholder} className='h-8 w-[150px] lg:w-[250px]' value={searchTerm} onChange={(event) => onSearchChange(event.target.value)} />
-				<Button variant='outline' className='h-8 px-2 lg:px-3 outline-primary-600 outline-2' onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+				<Input placeholder={searchPlaceholder} className='h-8 w-40' value={searchTerm} onChange={(event) => onSearchChange(event.target.value)} />
+				<Button variant='outline' className='h-8 px-2 outline-2 outline-primary-600 lg:px-3' onClick={() => fileInputRef.current && fileInputRef.current.click()}>
 					<PlusCircledIcon className='mr-2 h-4 w-4' />
 					Upload File .xml
 				</Button>
-				<input
-					type='file'
-					accept='.xml'
-					style={{ display: 'none' }}
-					ref={fileInputRef}
-					onChange={async (event) => {
-                        const file = event.target.files[0];
-                        if (file) {
-                            // Check the file type
-                            if (file.type !== 'text/xml' && file.type !== 'application/xml') {
-                                alert('Invalid file type, please select an XML file.');
-                                return;
-                            }
-                    
-                            // Create a FormData instance
-                            const formData = new FormData();
-                            // Append the file to the FormData instance
-                            formData.append('rkks_xml', file);
-                                                
-                            // Send the file to the backend
-                            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/rkks-create`, {
-                                method: 'POST',
-                                body: formData,
-                            }).catch(error => console.error('Error:', error));
-                    
-                            // Log the response
-                            console.log(await response.text());
-                    
-                            // Check the response
-                            if (!response.ok) {
-                                alert('File upload failed');
-                                return;
-                            }
-                    
-                            // Clear the file input
-                            event.target.value = '';
-                            alert('File uploaded successfully');
-                        }
-                    }}
-				/>
-                {/* Reset Button For Searching Data */}
-                {isFiltered && (
+				<input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileUpload} />
+
+				{/* Reset Button For Searching Data */}
+				{isFiltered && (
 					<Button onClick={resetSearch} className='h-8 px-3'>
 						Reset
 						<Cross2Icon className='ml-1 h-4 w-4' />
@@ -94,4 +89,3 @@ function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visib
 }
 
 export { DataTableToolbar };
-    
