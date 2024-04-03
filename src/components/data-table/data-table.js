@@ -13,7 +13,25 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 	const [viewOptions, setViewOptions] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState('');
+	// Add these state variables
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pageSize, setPageSize] = useState(10); // Default to 10 rows per page
 	const api = process.env.NEXT_PUBLIC_API_URL;
+
+	// Add these functions
+	const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
+	const previousPage = () => setCurrentPage((prevPage) => prevPage - 1);
+	const setPageIndex = (index) => setCurrentPage(index);
+    
+// Define the removeDuplicates function
+function removeDuplicates(array, key) {
+  const uniqueObject = array.reduce((accumulator, item) => {
+    accumulator[item[key]] = item;
+    return accumulator;
+  }, {});
+
+  return Object.values(uniqueObject);
+}
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -58,7 +76,12 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 		);
 	}, [data, searchTerm, visibleKeys]);
 
-    
+	// Calculate the number of pages
+	const pageCount = Math.ceil(filteredData.length / pageSize);
+
+	// Slice the filteredData array to get only the data for the current page
+	const currentPageData = filteredData.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+
 	return (
 		<>
 			<DataTableToolbar data={filteredData} filterFocus={filterFocus} searchPlaceholder={searchPlaceholder} filters={filters} visibleKeys={visibleKeys} onViewOptionChange={handleViewOptionChange} searchTerm={searchTerm} onSearchChange={setSearchTerm} />
@@ -74,8 +97,10 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{Array.isArray(filteredData) && filteredData.length > 0
-									? filteredData.map((item, rowIndex) => (
+								{/* {Array.isArray(filteredData) && filteredData.length > 0
+									? filteredData.map((item, rowIndex) => ( */}
+								{Array.isArray(currentPageData) && currentPageData.length > 0
+									? currentPageData.map((item, rowIndex) => (
 											<TableRow key={rowIndex}>
 												{visibleKeys.map((key, cellIndex) => (
 													<TableCell key={cellIndex}>
@@ -107,7 +132,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 					</div>
 				</div>
 			</ScrollArea>
-			<DataTablePagination viewOptions={viewOptions} onViewOptionChange={handleViewOptionChange} />
+			<DataTablePagination table={{ currentPage, pageSize, nextPage, previousPage, setPageIndex, pageCount }} setPageSize={setPageSize} />{' '}
 		</>
 	);
 }
