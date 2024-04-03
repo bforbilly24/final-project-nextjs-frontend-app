@@ -18,7 +18,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
-			const response = await fetch(api);
+			const response = await fetch(`${api}/xml-data`);
 			const jsonData = await response.json();
 			const dataArray = [].concat(...Object.values(jsonData.original));
 			setData(dataArray);
@@ -29,7 +29,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 				setViewOptions(
 					keys.map((key, index) => ({
 						key,
-						checked: index < 12,
+						checked: index < 10,
 					})),
 				);
 			}
@@ -58,6 +58,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 		);
 	}, [data, searchTerm, visibleKeys]);
 
+    
 	return (
 		<>
 			<DataTableToolbar data={filteredData} filterFocus={filterFocus} searchPlaceholder={searchPlaceholder} filters={filters} visibleKeys={visibleKeys} onViewOptionChange={handleViewOptionChange} searchTerm={searchTerm} onSearchChange={setSearchTerm} />
@@ -81,13 +82,11 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 														<TooltipProvider delayDuration={0}>
 															<Tooltip>
 																<TooltipTrigger asChild>
-																	<div className='truncate'>{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</div>
+																	<p className='w-full truncate'>{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</p>
 																</TooltipTrigger>
-																<TooltipContent>
+																<TooltipContent align='start'>
 																	<span>
-																		<Badge className='cursor-pointer px-1'>
-																			{isNaN(item[key]) ? item[key] : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
-																		</Badge>
+																		<Badge className='px-1'>{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</Badge>
 																	</span>
 																</TooltipContent>
 															</Tooltip>
