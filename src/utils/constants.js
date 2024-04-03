@@ -10,15 +10,15 @@ const navMenuItem = [
 	{
 		id: 2,
 		name: "RKKS",
-		icon: "bx bx-buildings",
+		icon: "bx bx-package",
 		href: "/admin/rkks",
 	},
-	{
-		id: 3,
-		name: "Test",
-		icon: "bx bx-package",
-		href: "/admin/testing",
-	},
+	// {
+	// 	id: 3,
+	// 	name: "Test",
+	// 	icon: "bx bx-buildings",
+	// 	href: "/admin/testing",
+	// },
 	// {
 	// 	id: 4,
 	// 	name: "Penyedia",
