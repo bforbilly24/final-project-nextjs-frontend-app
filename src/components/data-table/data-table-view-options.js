@@ -14,7 +14,7 @@ function DataTableViewOptions({ allColumnHeaders, visibleKeys, onViewOptionChang
 	// Handler function
 	const handleCheckedChange = (header, isChecked) => {
 		const checkedCount = Object.values(checkedState).filter(Boolean).length;
-		if (isChecked && checkedCount >= 12) {
+		if (isChecked && checkedCount >= 10) {
 			setAlertOpen(true);
 			return;
 		}
@@ -70,11 +70,11 @@ function DataTableViewOptions({ allColumnHeaders, visibleKeys, onViewOptionChang
 				<AlertDialogContent>
 					<AlertDialogTitle className='flex items-center gap-x-2'>
 						<ExclamationTriangleIcon className='h-4 w-4' />
-						<p>Warning</p>
+						<p>Peringatan</p>
 					</AlertDialogTitle>
-					<AlertDialogDescription>You have to uncheck one of the data first before you can display the desired data</AlertDialogDescription>
+					<AlertDialogDescription>Karena untuk user experience maksimal data yang ditampilkan adalah 10, maka Anda harus menghilangkan centang pada salah satu data terlebih dahulu sebelum dapat menampilkan data yang diinginkan.</AlertDialogDescription>
 					<AlertDialogFooter>
-						<AlertDialogCancel onClick={() => setAlertOpen(false)}>Close</AlertDialogCancel>
+						<AlertDialogCancel onClick={() => setAlertOpen(false)}>Tutup</AlertDialogCancel>
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
