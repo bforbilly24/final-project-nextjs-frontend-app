@@ -9,18 +9,20 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix
 import { Badge } from '../shadcn/ui/badge';
 
 function DataTable({ filterFocus, searchPlaceholder, filters }) {
+	const api = process.env.NEXT_PUBLIC_API_URL;
+
 	const [data, setData] = useState([]);
 
-    const [viewOptions, setViewOptions] = useState([]);
+	const [viewOptions, setViewOptions] = useState([]);
 
-    const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState(null);
 
-    const [searchTerm, setSearchTerm] = useState('');
+	const [isLoading, setIsLoading] = useState(true);
 
-    const [currentPage, setCurrentPage] = useState(0);
-	const [pageSize, setPageSize] = useState(10); // Default to 10 rows per page
+	const [searchTerm, setSearchTerm] = useState('');
 
-    const api = process.env.NEXT_PUBLIC_API_URL;
+	const [currentPage, setCurrentPage] = useState(0);
+	const [pageSize, setPageSize] = useState(10);
 
 	const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
 	const previousPage = () => setCurrentPage((prevPage) => prevPage - 1);
@@ -29,21 +31,32 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 	useEffect(() => {
 		const fetchData = async () => {
 			setIsLoading(true);
-			const response = await fetch(`${api}/xml-data`);
-			const jsonData = await response.json();
-			const dataArray = [].concat(...Object.values(jsonData.original));
-			setData(dataArray);
-			setIsLoading(false);
-
-			if (dataArray.length > 0) {
-				const keys = Object.keys(dataArray[0]);
-				setViewOptions(
-					keys.map((key, index) => ({
-						key,
-						checked: index < 10,
-					})),
-				);
+			try {
+				const response = await fetch(`${api}/xml-data`);
+				const jsonData = await response.json();
+				if (jsonData.original) {
+					const dataArray = [].concat(...Object.values(jsonData.original));
+					setData(dataArray);
+					if (dataArray.length > 0) {
+						const keys = Object.keys(dataArray[0]);
+						setViewOptions(
+							keys.map((key, index) => ({
+								key,
+								checked: index < 10,
+							})),
+						);
+					}
+				} else {
+					setData([]);
+					setViewOptions([]);
+				}
+				setError(null);
+			} catch (error) {
+				setError('Ups, Error! Terjadi kesalaha pada Database Anda');
+				setData([]);
+				setViewOptions([]);
 			}
+			setIsLoading(false);
 		};
 
 		fetchData();
@@ -87,42 +100,60 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 								</TableRow>
 							</TableHeader>
 							<TableBody>
-								{Array.isArray(currentPageData) && currentPageData.length > 0
-									? currentPageData.map((item, rowIndex) => (
-											<TableRow key={rowIndex}>
-												{visibleKeys.map((key, cellIndex) => (
-													<TableCell key={cellIndex}>
-														<TooltipProvider delayDuration={0}>
-															<Tooltip>
-																<TooltipTrigger asChild>
-																	<p className='w-full truncate'>{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</p>
-																</TooltipTrigger>
-																<TooltipContent align='start'>
-																	<span>
-																		<Badge className={`whitespace-normal px-1 ${item[key].length > 20 ? 'w-40' : 'w-full'}`}>
-																			{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
-																		</Badge>
-																	</span>
-																</TooltipContent>
-															</Tooltip>
-														</TooltipProvider>
-													</TableCell>
-												))}
-											</TableRow>
-										))
-									: !isLoading && (
-											<TableRow>
-												<TableCell colSpan={visibleKeys.length} className='h-24 text-center'>
-													Tidak ada entri
+								{isLoading ? (
+									<TableRow>
+										<TableCell colSpan={visibleKeys.length} className='h-24 text-center'>
+											Memuat...
+										</TableCell>
+									</TableRow>
+								) : error ? (
+									<TableRow>
+										<TableCell colSpan={visibleKeys.length} className='h-24 text-center'>
+											{error}
+										</TableCell>
+									</TableRow>
+								) : Array.isArray(currentPageData) && currentPageData.length > 0 ? (
+									currentPageData.map((item, rowIndex) => (
+										<TableRow key={rowIndex}>
+											{visibleKeys.map((key, cellIndex) => (
+												<TableCell key={cellIndex}>
+													<TooltipProvider delayDuration={0}>
+														<Tooltip>
+															<TooltipTrigger asChild>
+																<p className='w-full truncate'>{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}</p>
+															</TooltipTrigger>
+															<TooltipContent align='start'>
+																<span>
+																	<Badge className={`whitespace-normal px-1 ${item[key].length > 20 ? 'w-40' : 'w-full'}`}>
+																		{isNaN(item[key]) ? item[key] : key.includes('persen') ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%` : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
+																	</Badge>
+																</span>
+															</TooltipContent>
+														</Tooltip>
+													</TooltipProvider>
 												</TableCell>
-											</TableRow>
-										)}
+											))}
+										</TableRow>
+									))
+								) : searchTerm ? (
+									<TableRow>
+										<TableCell colSpan={visibleKeys.length} className='h-24 text-center'>
+											Data tidak tersedia untuk entri yang diberikan
+										</TableCell>
+									</TableRow>
+								) : (
+									<TableRow>
+										<TableCell colSpan={visibleKeys.length} className='h-24 text-center'>
+											Data kosong, Upload Data .xml terlebih dahulu
+										</TableCell>
+									</TableRow>
+								)}
 							</TableBody>
 						</Table>
 					</div>
 				</div>
 			</ScrollArea>
-			<DataTablePagination table={{ currentPage, pageSize, nextPage, previousPage, setPageIndex, pageCount }} setPageSize={setPageSize} />{' '}
+			<DataTablePagination table={{ currentPage, pageSize, nextPage, previousPage, setPageIndex, pageCount }} setPageSize={setPageSize} />
 		</>
 	);
 }
