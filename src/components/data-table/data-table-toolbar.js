@@ -1,10 +1,11 @@
 'use client';
 
-import { PlusCircledIcon, Cross2Icon } from '@radix-ui/react-icons';
+import { Cross2Icon, UploadIcon, FileIcon } from '@radix-ui/react-icons';
 import { Button } from '../shadcn/ui/button';
 import { Input } from '../shadcn/ui/input';
 import { DataTableViewOptions } from './data-table-view-options';
 import { useRef } from 'react';
+import * as XLSX from 'xlsx';
 
 async function handleFileUpload(event) {
 	const file = event.target.files[0];
@@ -62,16 +63,27 @@ function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visib
 		onSearchChange('');
 	};
 
+	function exportToExcel() {
+        const ws = XLSX.utils.json_to_sheet(data);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+        XLSX.writeFile(wb, "data.xlsx");
+    }
+
 	return (
 		<div className='disabled:curs flex items-center justify-between'>
 			<div className='flex flex-1 items-center space-x-5'>
 				<Input placeholder={searchPlaceholder} className='h-8 w-40' value={searchTerm} onChange={(event) => onSearchChange(event.target.value)} />
-				<Button variant='outline' className='h-8 px-2 outline-2 outline-primary-600 lg:px-3' onClick={() => fileInputRef.current && fileInputRef.current.click()}>
-					<PlusCircledIcon className='mr-2 h-4 w-4' />
-					Upload File .xml
+				<Button variant='outline' className='h-8 px-3' onClick={() => fileInputRef.current && fileInputRef.current.click()}>
+					<UploadIcon className='mr-2 h-4 w-4' />
+					Upload file .xml
 				</Button>
 				<input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileUpload} />
 
+				<Button onClick={exportToExcel} className='h-8 px-3'>
+                <FileIcon className='mr-2 h-4 w-4' />
+                    Export to Excel
+				</Button>
 				{/* Reset Button For Searching Data */}
 				{isFiltered && (
 					<Button onClick={resetSearch} className='h-8 px-3'>
