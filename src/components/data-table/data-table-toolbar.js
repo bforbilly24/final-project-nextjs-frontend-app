@@ -28,7 +28,7 @@ async function handleFileUpload(event) {
 		}).catch((error) => console.error('Error:', error));
 
 		// Log the response
-		console.log(await response.text());
+		// console.log(await response.text());
 
 		// Check the response
 		if (!response.ok) {
@@ -40,6 +40,7 @@ async function handleFileUpload(event) {
 		event.target.value = '';
 		alert('File uploaded successfully');
 	}
+	window.location.reload();
 }
 
 function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visibleKeys, onViewOptionChange, searchTerm, onSearchChange }) {
@@ -64,11 +65,11 @@ function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visib
 	};
 
 	function exportToExcel() {
-        const ws = XLSX.utils.json_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
-        XLSX.writeFile(wb, "data.xlsx");
-    }
+		const ws = XLSX.utils.json_to_sheet(data);
+		const wb = XLSX.utils.book_new();
+		XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+		XLSX.writeFile(wb, 'data.xlsx');
+	}
 
 	return (
 		<div className='disabled:curs flex items-center justify-between'>
@@ -81,8 +82,8 @@ function DataTableToolbar({ data, filterFocus, searchPlaceholder, filters, visib
 				<input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={handleFileUpload} />
 
 				<Button onClick={exportToExcel} className='h-8 px-3'>
-                <FileIcon className='mr-2 h-4 w-4' />
-                    Export to Excel
+					<FileIcon className='mr-2 h-4 w-4' />
+					Export to Excel
 				</Button>
 				{/* Reset Button For Searching Data */}
 				{isFiltered && (
