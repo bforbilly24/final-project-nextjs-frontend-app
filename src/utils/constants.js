@@ -1,14 +1,14 @@
 import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, LockClosedIcon, CheckCircledIcon, CircleIcon, CrossCircledIcon, QuestionMarkCircledIcon, StopwatchIcon } from "@radix-ui/react-icons";
 
 const navMenuItem = [
+	// {
+	// 	id: 1,
+	// 	name: "Pengumuman",
+	// 	icon: "bx bx-party",
+	// 	href: "/admin/pengumuman",
+	// },
 	{
 		id: 1,
-		name: "Pengumuman",
-		icon: "bx bx-party",
-		href: "/admin/pengumuman",
-	},
-	{
-		id: 2,
 		name: "RKKS",
 		icon: "bx bx-package",
 		href: "/admin/rkks",
