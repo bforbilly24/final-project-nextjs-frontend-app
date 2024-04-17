@@ -1,17 +1,17 @@
-// import { getServerSession } from "next-auth";
-// import { authOptions } from "@/libs/auth-options";
-// import { redirect } from "next/navigation";
 import { Badge } from '@/components/shadcn/ui/badge';
 import { Card } from '@/components/shadcn/ui/card';
 import { RouterButton } from '@/components/button/router-button';
 import { ToastButton } from '@/components/button/toast-button';
 import { LogoutButton } from '@/components/button/logout-button';
 import { ToggleTheme } from '@/hooks/toggle-theme';
+import authOptions from '@/libs/auth-options';
+import { getServerSession } from 'next-auth';
+import { redirect } from 'next/navigation';
 
 export default async function AdminPage() {
-	// const session = await getServerSession(authOptions);
+    // const session = await getServerSession(authOptions);
 
-	// if (!session) return redirect("/admin/auth/login");
+	// if (!session) return redirect('/admin/auth/login');
 
 	return (
 		<div className='flex w-fit flex-1 flex-col gap-5'>
@@ -24,11 +24,6 @@ export default async function AdminPage() {
 				<Badge variant='destructive'>Destructive</Badge>
 			</div>
 			<p className='text-muted-foreground'>We hope you are making progress on your project! Feel free to read the latest news about us.</p>
-
-			{/* <div className="flex w-fit cursor-pointer items-center gap-2 text-muted-foreground hover:text-primary">
-					<div>See more on the blog</div>
-					<ArrowTopRightIcon />
-				</div> */}
 
 			<div className='flex gap-5'>
 				<div className='flex w-full flex-col gap-5'>
@@ -71,7 +66,7 @@ export default async function AdminPage() {
 					<Card>
 						<div className='flex w-full gap-5 p-6'>
 							<RouterButton text={'Pengumuman'} action={'/admin/pengumuman'} />
-							<RouterButton text={'Dinas'} action={'/admin/rkks'} />
+							<RouterButton text={'RKKS'} action={'/admin/rkks'} />
 							{/* <RouterButton text={'Paket'} action={'/admin/paket'} />
 							<RouterButton text={'Penyedia'} action={'/admin/penyedia'} />
 							<RouterButton text={'Tenaga Ahli'} action={'/admin/tenaga-ahli'} />
