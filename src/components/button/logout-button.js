@@ -1,39 +1,59 @@
-"use client";
-
-import { signOut, useSession } from "next-auth/react";
-import { useToast } from "../shadcn/ui/use-toast";
-import { Button } from "../shadcn/ui/button";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { ReloadIcon } from "@radix-ui/react-icons";
+'use client';
+import { Button } from '@/components/shadcn/ui/button';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { toast } from '@/components/shadcn/ui/use-toast';
 
 function LogoutButton() {
+	const api = process.env.NEXT_PUBLIC_API_URL;
 	const router = useRouter();
-	const [loading, setLoading] = useState(false);
-	const { toast } = useToast();
-	// const { data: session, status } = useSession();
+	const [LogOutLoading, setLogOutLoading] = useState(false);
 
 	async function handleLogOut(event) {
-		// setLoading(true);
-		// const result = await signOut({
-		// 	redirect: false,
-		// });
+		setLogOutLoading(true);
+		try {
+			console.log('Attempting to logout...');
+			const token = localStorage.getItem('token');
 
-		toast({
-			variant: "success",
-			title: "Logout Success",
-			description: "Credential information were removed",
-		});
+			const response = await fetch(`${api}/logout`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': `Bearer ${token}`,
+				},
+			});
 
-		router.push("/admin/auth/login");
-		router.refresh();
+			if (!response.ok) {
+				throw new Error(`Failed to log out, server responded with status: ${response.status}`);
+			}
 
-		// setLoading(false);
+			console.log('Server logout successful, invalidating client session...');
+			localStorage.removeItem('token');
+
+			toast({
+				variant: 'success',
+				title: 'Berhasil keluar',
+				description: 'Informasi kredensial berhasil dihapus',
+			});
+
+			router.push('/admin/auth/login');
+			router.refresh();
+		} catch (error) {
+			console.error('Logout error:', error);
+
+			toast({
+				variant: 'error',
+				title: 'Gagal keluar',
+				description: 'Cek koneksi internet anda dan/atau database error',
+			});
+		} finally {
+			setLogOutLoading(false);
+		}
 	}
-
+    
 	return (
-		<Button disabled={loading} onClick={handleLogOut} className="w-full">
-			{loading ? <ReloadIcon className="mr-2 h-4 w-4 animate-spin sm:flex" /> : "Sign out"}
+		<Button disabled={LogOutLoading} onClick={handleLogOut} className='w-full'>
+			{LogOutLoading ? 'Logging out...' : 'Log out'}
 		</Button>
 	);
 }

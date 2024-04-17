@@ -25,8 +25,10 @@ export default async function RkksPage() {
 				</Link>
 				<div>
 					<h2 className='text-2xl font-bold tracking-tight'>Data XML</h2>
+					{/* <p className='text-muted-foreground'>{`Ditemukan ${packages?.data?.length} entri paket yang tersedia`}</p> */}
 				</div>
 			</div>
+			{/* <DataTable data={packages} columns={packageColumns} filterFocus={'name'} searchPlaceholder={'Nama...'} filters={['code']} services={services} /> */}
 			<DataTable columns={packageColumns} filterFocus={'name'} searchPlaceholder={'Nama...'} filters={['code']}  />
 		</div>
 	);

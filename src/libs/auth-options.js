@@ -1,100 +1,45 @@
-// import { PrismaAdapter } from "@auth/prisma-adapter";
-// import { prisma } from "@/libs/prisma";
-// import CredentialsProvider from "next-auth/providers/credentials";
-// import { compare } from "bcryptjs";
-// import jwt from "jsonwebtoken";
+import NextAuth from 'next-auth'
+import CredentialsProvider from 'next-auth/providers/credentials';
+import axios from 'axios'
 
-// const authOptions = {
-// 	adapter: PrismaAdapter(prisma),
-// 	pages: {
-// 		signIn: "/admin/auth/login",
-// 	},
-// 	session: {
-// 		strategy: "jwt",
-// 		// d * h * m * s
-// 		maxAge: 3 * 24 * 60 * 60, // 3 days
-// 	},
-// 	// jwt: {
-// 	// 	// d * h * m * s
-// 	// 	maxAge: 3 * 24 * 60 * 60, // 30 days
+const api = process.env.NEXT_PUBLIC_API_URL;
 
-// 	// 	async encode({ token, secret, maxAge }) {
-// 	// 		const claimToken = {
-// 	// 			id: token.id,
-// 	// 			name: token.username,
-// 	// 			username: token.username,
-// 	// 			email: token.email,
-// 	// 		};
-// 	// 		const encodedToken = jwt.sign(claimToken, secret, { expiresIn: maxAge });
-// 	// 		return encodedToken;
-// 	// 	},
+export default NextAuth({    
+  providers: [
+    CredentialsProvider({
+      name: 'Credentials',
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" }
+      },
+      authorize: async (credentials) => {
+        try {
+          const res = await axios.post(`${api}/login`, {
+            email: credentials.email,
+            password: credentials.password
+          })
 
-// 	// 	async decode({ token, secret, maxAge }) {
-// 	// 		const verifiedToken = jwt.verify(token, secret);
-// 	// 		return verifiedToken;
-// 	// 	},
-// 	// },
-// 	providers: [
-// 		CredentialsProvider({
-// 			name: "credentials",
-// 			credentials: {
-// 				email: { label: "Email", type: "email" },
-// 				password: { label: "Password", type: "password" },
-// 			},
-
-// 			async authorize(credentials, req) {
-// 				try {
-// 					if (!credentials?.email || !credentials?.password) return null;
-// 					const existingUser = await prisma.admin.findUnique({
-// 						where: { email: credentials.email },
-// 					});
-
-// 					if (!existingUser) return null;
-
-// 					const passwordMatch = await compare(credentials?.password, existingUser?.password);
-
-// 					if (!passwordMatch) return null;
-
-// 					return {
-// 						id: existingUser?.id,
-// 						name: existingUser?.name,
-// 						username: existingUser?.username,
-// 						email: existingUser?.email,
-// 					};
-// 				} catch (error) {
-// 					console.log(error);
-// 				}
-// 			},
-// 		}),
-// 	],
-// 	callbacks: {
-// 		// async signIn({ user, account, profile, email, credentials }) {
-// 		// 	return true;
-// 		// },
-
-// 		// async redirect({ url, baseUrl }) {
-// 		// 	return baseUrl;
-// 		// },
-
-// 		async session({ session, token, user }) {
-// 			const data = {
-// 				id: token.id,
-// 				name: token.name,
-// 				username: token.username,
-// 				email: token.email,
-// 			};
-// 			return data;
-// 		},
-// 		async jwt({ token, user, account, profile, isNewUser }) {
-// 			if (user) {
-// 				token.id = user.id;
-// 				token.name = user.name;
-// 				token.username = user.username;
-// 				token.email = user.email;
-// 			}
-// 			return token;
-// 		},
-// 	},
-// };
-
-// export { authOptions };
+          if (res.data) {
+            return { status: 'success', token: res.data.token }
+          } else {
+            throw new Error('Login failed')
+          }
+        } catch (error) {
+          throw new Error('Login failed')
+        }
+      }
+    })
+  ],
+  callbacks: {
+    jwt: async (token, user) => {
+      if (user) {
+        token.accessToken = user.token
+      }
+      return token
+    },
+    session: async (session, user) => {
+      session.accessToken = user.accessToken
+      return session
+    }
+  }
+})
