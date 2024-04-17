@@ -1,10 +1,10 @@
-import { SessionProvider } from "@/components/provider/session-provider";
-import { Sidebar } from "@/components/navigation/sidebar";
-// import { authOptions } from "@/libs/auth-options";
-// import { getServerSession } from "next-auth";
+import { SessionProvider } from '@/components/provider/session-provider';
+import { Sidebar } from '@/components/navigation/sidebar';
+import { authOptions } from '@/libs/auth-options';
+import { getServerSession } from 'next-auth';
 
 export const metadata = {
-	title: "Dashboard",
+	title: 'Dashboard',
 };
 
 export default async function AdminLayout({ children }) {
@@ -12,8 +12,9 @@ export default async function AdminLayout({ children }) {
 
 	return (
 		<SessionProvider>
+			{/* {session && <Sidebar />} */}
 			<Sidebar />
-			<div className="flex flex-1 flex-col justify-center gap-5 border-l p-8 sm:flex-row">{children}</div>
+			<div className='flex flex-1 flex-col justify-center gap-5 border-l p-8 sm:flex-row'>{children}</div>
 		</SessionProvider>
 	);
 }
