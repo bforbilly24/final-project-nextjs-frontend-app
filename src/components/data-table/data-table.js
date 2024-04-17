@@ -29,32 +29,6 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 	const setPageIndex = (index) => setCurrentPage(index);
 
 	useEffect(() => {
-		// const fetchData = async () => {
-		//     setIsLoading(true);
-		//     try {
-		//         const response = await fetch(`${api}/xml-data`);
-		//         const jsonData = await response.json();
-		//         if (jsonData.original) {
-		//             const dataArray = [].concat(...Object.values(jsonData.original));
-		//             const filteredDataArray = dataArray.map(item => {
-		//                 const filteredItem = {};
-		//                 Object.keys(item).forEach(key => {
-		//                     if (item[key] !== null && !(Array.isArray(item[key]) && item[key].length === 0)) {
-		//                         filteredItem[key] = item[key];
-		//                     }
-		//                 });
-		//                 return filteredItem;
-		//             });
-		//             setData(filteredDataArray);
-		//             if (filteredDataArray.length > 0) {
-		//                 const keys = Object.keys(filteredDataArray[0]);
-		//                 setViewOptions(
-		//                     keys.map((key, index) => ({
-		//                         key,
-		//                         checked: index < 10,
-		//                     })),
-		//                 );
-		//             }
 		const fetchData = async () => {
 			setIsLoading(true);
 			try {
@@ -62,9 +36,18 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 				const jsonData = await response.json();
 				if (jsonData.original) {
 					const dataArray = [].concat(...Object.values(jsonData.original));
-					setData(dataArray);
-					if (dataArray.length > 0) {
-						const keys = Object.keys(dataArray[0]);
+					const filteredDataArray = dataArray.map((item) => {
+						const filteredItem = {};
+						Object.keys(item).forEach((key) => {
+							if (item[key] !== null && !(Array.isArray(item[key]) && item[key].length === 0)) {
+								filteredItem[key] = item[key];
+							}
+						});
+						return filteredItem;
+					});
+					setData(filteredDataArray);
+					if (filteredDataArray.length > 0) {
+						const keys = Object.keys(filteredDataArray[0]);
 						setViewOptions(
 							keys.map((key, index) => ({
 								key,
@@ -72,6 +55,23 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
 							})),
 						);
 					}
+					// const fetchData = async () => {
+					// 	setIsLoading(true);
+					// 	try {
+					// 		const response = await fetch(`${api}/xml-data`);
+					// 		const jsonData = await response.json();
+					// 		if (jsonData.original) {
+					// 			const dataArray = [].concat(...Object.values(jsonData.original));
+					// 			setData(dataArray);
+					// 			if (dataArray.length > 0) {
+					// 				const keys = Object.keys(dataArray[0]);
+					// 				setViewOptions(
+					// 					keys.map((key, index) => ({
+					// 						key,
+					// 						checked: index < 10,
+					// 					})),
+					// 				);
+					// 			}
 				} else {
 					setData([]);
 					setViewOptions([]);
