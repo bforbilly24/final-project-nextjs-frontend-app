@@ -9,7 +9,7 @@ import { getServerSession } from 'next-auth';
 import { redirect } from 'next/navigation';
 
 export default async function AdminPage() {
-    // const session = await getServerSession(authOptions);
+	// const session = await getServerSession(authOptions);
 
 	// if (!session) return redirect('/admin/auth/login');
 
@@ -65,7 +65,7 @@ export default async function AdminPage() {
 
 					<Card>
 						<div className='flex w-full gap-5 p-6'>
-							<RouterButton text={'Pengumuman'} action={'/admin/pengumuman'} />
+							{/* <RouterButton text={'Pengumuman'} action={'/admin/pengumuman'} /> */}
 							<RouterButton text={'RKKS'} action={'/admin/rkks'} />
 							{/* <RouterButton text={'Paket'} action={'/admin/paket'} />
 							<RouterButton text={'Penyedia'} action={'/admin/penyedia'} />
@@ -75,23 +75,25 @@ export default async function AdminPage() {
 						</div>
 					</Card>
 
-					{/* <Card>
-						<div className="flex w-full gap-5 p-6">
+					<Card>
+						<ToggleTheme />
+
+						{/* <div className="flex w-full gap-5 p-6">
 							<RouterButton text={"Profil"} action={"/admin/profil"} />
 							<RouterButton text={"Pengaturan"} action={"/admin/pengaturan"} />
-						</div>
-					</Card> */}
-
+						</div> */}
+					</Card>
+					{/* 
 					<Card>
 						<div className='flex w-full gap-5 p-6'>
 							<ToastButton title={'Authenticated'} description={'test'} text={'Informasi'} />
 							<LogoutButton />
 						</div>
-					</Card>
+					</Card> */}
 				</div>
 
-				<div className='flex h-full w-3/6 flex-col '>
-					{/* <Card>
+				{/* <div className='flex h-full w-3/6 flex-col '> */}
+				{/* <Card>
 						<div className="relative h-28 w-full cursor-pointer">
 							<div className="flex h-full gap-5 p-6 w-full">
 								<div className="flex h-full w-full items-center justify-center rounded bg-primary">
@@ -108,7 +110,7 @@ export default async function AdminPage() {
 						</div>
 					</Card> */}
 
-					<Card className='h-full'>
+				{/* <Card className='h-full'>
 						<div className='flex h-full flex-col justify-between gap-5 p-6'>
 							<div className='flex h-full w-full flex-col justify-center gap-2 rounded-md bg-destructive p-6 text-white hover:cursor-text'>
 								<div className='font-mono text-xs'>
@@ -127,10 +129,9 @@ export default async function AdminPage() {
 									circleitwarehouse@cit.id
 								</div>
 							</div>
-							<ToggleTheme />
 						</div>
-					</Card>
-				</div>
+					</Card> */}
+				{/* </div> */}
 			</div>
 		</div>
 	);
