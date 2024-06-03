@@ -1,25 +1,28 @@
-"use client";
+'use client';
 
-import { useRouter } from "next/navigation";
-import { useToast, toast } from "@/components/shadcn/ui/use-toast";
-import { useEffect } from "react";
-import { Loader } from "./loader";
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { toast } from '@/components/shadcn/ui/use-toast';
+import { Loader } from '@/components/miscellaneous/loader';
 
-function UnauthorizedContent() {
+function UnauthenticatedContent() {
+	const pathname = usePathname();
 	const router = useRouter();
-	const { toast } = useToast();
 
 	useEffect(() => {
-		toast({
-			variant: "error",
-			title: "Not Authorized",
-			description: "Please login credential to continue",
-		});
-		router.push("/admin/auth/login");
+		router.push('/admin/auth/login');
 		router.refresh();
-	}, [toast, router]);
+
+		return () => {
+			toast({
+				variant: 'error',
+				title: 'Gagal',
+				description: `Silakan login untuk mengakses '${pathname}'`,
+			});
+		};
+	}, [router, pathname]);
 
 	return <Loader />;
 }
 
-export { UnauthorizedContent };
+export { UnauthenticatedContent };
