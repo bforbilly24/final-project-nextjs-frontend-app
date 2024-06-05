@@ -33,7 +33,7 @@ function LoginForm() {
 				toast({
 					variant: 'error',
 					title: 'Gagal masuk',
-					description: 'Invalid credential, please try again',
+					description: 'Kredensial tidak valid, harap coba lagi',
 				});
 				setLogInLoading(false);
 				return;
@@ -41,7 +41,7 @@ function LoginForm() {
 				toast({
 					variant: 'success',
 					title: 'Berhasil masuk',
-					description: 'Selamat datang di LPSEV dashboard',
+					description: 'Selamat datang di RKKS dashboard',
 				});
 
                 router.push('/admin');
