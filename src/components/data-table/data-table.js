@@ -8,8 +8,10 @@ import { DataTablePagination } from './data-table-pagination';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@radix-ui/react-tooltip';
 import { Badge } from '../shadcn/ui/badge';
 import { getDataXml } from '@/actions/get-data-xml';
+import { useSession } from 'next-auth/react';
 
 function DataTable({ filterFocus, searchPlaceholder, filters }) {
+    const { data: session } = useSession();
     const [data, setData] = useState([]);
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +28,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
     const fetchData = async () => {
         setIsLoading(true);
         try {
-            const jsonData = await getDataXml();
+            const jsonData = await getDataXml(session.accessToken); // Pass token
             if (jsonData && Array.isArray(jsonData)) {
                 setData(jsonData);
                 setDataUploaded(true);
@@ -46,8 +48,10 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
     };
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        if (session) {
+            fetchData();
+        }
+    }, [session]);
 
     const filteredData = useMemo(() => {
         if (!searchTerm) return data;
@@ -74,7 +78,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
     return (
         <>
             <DataTableToolbar 
-                data={data} 
+                data={filteredData} 
                 fetchData={fetchData} 
                 filterFocus={filterFocus} 
                 searchPlaceholder={searchPlaceholder} 
@@ -83,6 +87,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
                 onSearchChange={setSearchTerm} 
                 dataUploaded={dataUploaded} 
                 setDataUploaded={setDataUploaded} 
+                error={error}
             />
             <ScrollArea className="w-screen">
                 <div className='space-y-4'>

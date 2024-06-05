@@ -9,7 +9,7 @@ import * as XLSX from 'xlsx';
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle } from '../shadcn/ui/alert-dialog';
 import { useSession } from 'next-auth/react';
 
-async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded) {
+async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, token) {
     const file = event.target.files[0];
     if (file) {
         if (file.type !== 'text/xml' && file.type !== 'application/xml') {
@@ -27,6 +27,7 @@ async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessa
             const response = await axios.post(`${apiUrl}/upload-xml`, formData, {
                 headers: {
                     'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
             });
 
@@ -138,7 +139,7 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
                     <UploadIcon className='mr-2 h-4 w-4' />
                     Upload file .xml
                 </Button>
-                <input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={(event) => handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded)} />
+                <input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={(event) => handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, session.accessToken)} />
 
                 <Button onClick={exportToExcel} className='h-8 px-3' disabled={exportExcelDisabled || !dataUploaded || error}>
                     <FileIcon className='mr-2 h-4 w-4' />
