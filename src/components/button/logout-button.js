@@ -31,7 +31,7 @@ function LogoutButton() {
 			toast({
 				variant: 'error',
 				title: 'Gagal keluar',
-				description: 'Cek koneksi internet anda atau database error',
+				description: 'Cek koneksi internet anda dan/atau database error',
 			});
 			setLogOutLoading(false);
 		}
