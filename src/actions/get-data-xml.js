@@ -1,12 +1,13 @@
 'use server';
 import axios from 'axios';
 
-export async function getDataXml() {
+export async function getDataXml(token) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     try {
         const response = await axios.get(`${apiUrl}/xml-data`, {
             headers: {
                 'Accept': 'application/json',
+                'Authorization': `Bearer ${token}`
             },
         });
 
