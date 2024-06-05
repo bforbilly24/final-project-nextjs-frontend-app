@@ -1,5 +1,3 @@
-// /mnt/data/data-table.js
-
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
@@ -19,31 +17,35 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
     const [currentPage, setCurrentPage] = useState(0);
     const [pageSize, setPageSize] = useState(10);
     const [paginationDisabled, setPaginationDisabled] = useState(false);
+    const [dataUploaded, setDataUploaded] = useState(false);
 
     const nextPage = () => setCurrentPage((prevPage) => prevPage + 1);
     const previousPage = () => setCurrentPage((prevPage) => prevPage - 1);
     const setPageIndex = (index) => setCurrentPage(index);
 
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            try {
-                const jsonData = await getDataXml();
-                if (jsonData) {
-                    setData(jsonData);
-                } else {
-                    setData([]);
-                }
-                setError(null);
-                setPaginationDisabled(false);
-            } catch (error) {
-                setError('Ups, Error! Terjadi kesalahan pada Database Anda');
+    const fetchData = async () => {
+        setIsLoading(true);
+        try {
+            const jsonData = await getDataXml();
+            if (jsonData && Array.isArray(jsonData)) {
+                setData(jsonData);
+                setDataUploaded(true);
+            } else {
                 setData([]);
-                setPaginationDisabled(true);
+                setDataUploaded(false);
             }
-            setIsLoading(false);
-        };
+            setError(null);
+            setPaginationDisabled(false);
+        } catch (error) {
+            setError('Ups, Error! Terjadi kesalahan pada Database Anda');
+            setData([]);
+            setDataUploaded(false);
+            setPaginationDisabled(true);
+        }
+        setIsLoading(false);
+    };
 
+    useEffect(() => {
         fetchData();
     }, []);
 
@@ -61,17 +63,27 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
     }, [data, searchTerm]);
 
     const filteredKeys = useMemo(() => {
-        if (data.length === 0) return [];
+        if (data.length === 0 || !data[0]) return [];
         const keys = Object.keys(data[0]).filter(key => key !== 'created_at' && key !== 'updated_at');
         return keys.filter(key => data.some(item => item[key] !== null));
     }, [data]);
 
     const pageCount = Math.ceil(filteredData.length / pageSize);
-    const currentPageData = filteredData.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
+    const currentPageData = Array.isArray(filteredData) ? filteredData.slice(currentPage * pageSize, (currentPage + 1) * pageSize) : [];
 
     return (
         <>
-            <DataTableToolbar data={filteredData} filterFocus={filterFocus} searchPlaceholder={searchPlaceholder} filters={filters} searchTerm={searchTerm} onSearchChange={setSearchTerm} setData={setData} />
+            <DataTableToolbar 
+                data={data} 
+                fetchData={fetchData} 
+                filterFocus={filterFocus} 
+                searchPlaceholder={searchPlaceholder} 
+                filters={filters} 
+                searchTerm={searchTerm} 
+                onSearchChange={setSearchTerm} 
+                dataUploaded={dataUploaded} 
+                setDataUploaded={setDataUploaded} 
+            />
             <ScrollArea className="w-screen">
                 <div className='space-y-4'>
                     <div className='rounded-md border'>
@@ -143,7 +155,7 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
                     </div>
                 </div>
             </ScrollArea>
-            <DataTablePagination table={{ currentPage, pageSize, nextPage, previousPage, setPageIndex, pageCount }} setPageSize={setPageSize} disabled={paginationDisabled} />
+            <DataTablePagination table={{ currentPage, pageSize, nextPage, previousPage, setPageIndex, pageCount }} setPageSize={setPageSize} disabled={paginationDisabled || !dataUploaded} />
         </>
     );
 }
