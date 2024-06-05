@@ -1,34 +1,23 @@
 'use client';
+
+import { signOut } from 'next-auth/react';
+import { useToast } from '@/components/shadcn/ui/use-toast';
 import { Button } from '@/components/shadcn/ui/button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import { toast } from '@/components/shadcn/ui/use-toast';
+import { ReloadIcon } from '@radix-ui/react-icons';
 
 function LogoutButton() {
-	const api = process.env.NEXT_PUBLIC_API_URL;
 	const router = useRouter();
 	const [LogOutLoading, setLogOutLoading] = useState(false);
+	const { toast } = useToast();
 
 	async function handleLogOut(event) {
 		setLogOutLoading(true);
 		try {
-			console.log('Attempting to logout...');
-			const token = localStorage.getItem('token');
-
-			const response = await fetch(`${api}/logout`, {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-					'Authorization': `Bearer ${token}`,
-				},
+			await signOut({
+				redirect: false,
 			});
-
-			if (!response.ok) {
-				throw new Error(`Failed to log out, server responded with status: ${response.status}`);
-			}
-
-			console.log('Server logout successful, invalidating client session...');
-			localStorage.removeItem('token');
 
 			toast({
 				variant: 'success',
@@ -39,21 +28,18 @@ function LogoutButton() {
 			router.push('/admin/auth/login');
 			router.refresh();
 		} catch (error) {
-			console.error('Logout error:', error);
-
 			toast({
 				variant: 'error',
 				title: 'Gagal keluar',
-				description: 'Cek koneksi internet anda dan/atau database error',
+				description: 'Cek koneksi internet anda atau database error',
 			});
-		} finally {
 			setLogOutLoading(false);
 		}
 	}
-    
+
 	return (
 		<Button disabled={LogOutLoading} onClick={handleLogOut} className='w-full'>
-			{LogOutLoading ? 'Logging out...' : 'Log out'}
+			{LogOutLoading ? <ReloadIcon className='mr-2 h-4 w-4 animate-spin sm:flex' /> : 'Log Out'}
 		</Button>
 	);
 }
