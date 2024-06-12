@@ -1,6 +1,5 @@
 import CredentialsProvider from 'next-auth/providers/credentials';
 import axios from 'axios';
-import { signOut } from 'next-auth/react';
 
 const authOptions = {
     providers: [
@@ -31,7 +30,7 @@ const authOptions = {
     ],
     session: {
         strategy: 'jwt',
-        maxAge: 30 * 24 * 60 * 60, // 30 days
+        maxAge: 30 * 24 * 60 * 60,
     },
     callbacks: {
         jwt: async ({ token, user }) => {
