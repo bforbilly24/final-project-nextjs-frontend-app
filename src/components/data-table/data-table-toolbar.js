@@ -8,6 +8,8 @@ import axios from 'axios';
 import * as XLSX from 'xlsx';
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogTitle } from '../shadcn/ui/alert-dialog';
 import { useSession } from 'next-auth/react';
+import { DataTableViewOptions } from './data-table-view-options';
+import { DataTableFacetedFilter } from './data-table-faceted-filter';
 
 async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, token) {
     const file = event.target.files[0];
@@ -26,8 +28,8 @@ async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessa
         try {
             const response = await axios.post(`${apiUrl}/upload-xml`, formData, {
                 headers: {
-                    'Accept': 'application/json',
-                    'Authorization': `Bearer ${token}`,
+                    Accept: 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
             });
 
@@ -71,7 +73,7 @@ async function checkServerStatus(apiUrl, setUploadDisabled, setExportExcelDisabl
     }
 }
 
-function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, filters, searchTerm, onSearchChange, dataUploaded, setDataUploaded, error }) {
+function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, filters, searchTerm, onSearchChange, dataUploaded, setDataUploaded, error, allColumnHeaders, visibleKeys, onViewOptionChange, onSortChange, sortColumn, sortOrder }) {
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
     const fileInputRef = useRef();
     const { data: session } = useSession();
@@ -108,7 +110,7 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
             return;
         }
 
-        const filteredData = data.map(item => {
+        const filteredData = data.map((item) => {
             const { created_at, updated_at, ...rest } = item;
             const filteredItem = {};
             for (const key in rest) {
@@ -128,13 +130,7 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
     return (
         <div className='disabled:curs flex items-center justify-between'>
             <div className='flex flex-1 items-center space-x-5'>
-                <Input 
-                    placeholder={searchPlaceholder} 
-                    className='h-8 w-40' 
-                    value={searchTerm} 
-                    onChange={(event) => onSearchChange(event.target.value)} 
-                    disabled={!dataUploaded || error} 
-                />
+                <Input placeholder={searchPlaceholder} className='h-8 w-40' value={searchTerm} onChange={(event) => onSearchChange(event.target.value)} disabled={!dataUploaded || error} />
                 <Button variant='outline' className='h-8 px-3' onClick={() => fileInputRef.current && fileInputRef.current.click()} disabled={uploadDisabled}>
                     <UploadIcon className='mr-2 h-4 w-4' />
                     Upload file .xml
@@ -152,22 +148,23 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
                     </Button>
                 )}
             </div>
-            <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
-                <AlertDialogContent>
-                    <AlertDialogTitle className='flex items-center gap-x-2'>
-                        {alertType === 'error' ? (
-                            <ExclamationTriangleIcon className='h-4 w-4' />
-                        ) : (
-                            <CheckIcon className='h-4 w-4' />
-                        )}
-                        <p>{alertType === 'error' ? 'Error' : 'Success'}</p>
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>{alertMessage}</AlertDialogDescription>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setAlertOpen(false)}>Close</AlertDialogCancel>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+
+            <div className='flex gap-5'>
+                {/* <DataTableFacetedFilter column={sortColumn} title="Sort" sortOrder={sortOrder} onSortChange={onSortChange} /> */}
+                <DataTableViewOptions allColumnHeaders={allColumnHeaders} visibleKeys={visibleKeys} onViewOptionChange={onViewOptionChange} />
+                <AlertDialog open={alertOpen} onOpenChange={setAlertOpen}>
+                    <AlertDialogContent>
+                        <AlertDialogTitle className='flex items-center gap-x-2'>
+                            {alertType === 'error' ? <ExclamationTriangleIcon className='h-4 w-4' /> : <CheckIcon className='h-4 w-4' />}
+                            <p>{alertType === 'error' ? 'Error' : 'Success'}</p>
+                        </AlertDialogTitle>
+                        <AlertDialogDescription>{alertMessage}</AlertDialogDescription>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel onClick={() => setAlertOpen(false)}>Close</AlertDialogCancel>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+            </div>
         </div>
     );
 }
