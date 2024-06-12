@@ -1,5 +1,5 @@
 const authors = {
-	id: 'rkkspens-nextjs-fullstack-dashboard',
+	id: 'rkkspens-nextjs-frontend-dashboard',
 	displayName: 'RKKS - Rencana Kerja Kegiatan Satuan',
 	version: '1.0.1',
 	versionCode: '100',
