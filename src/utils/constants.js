@@ -1,48 +1,22 @@
-import { ArrowDownIcon, ArrowRightIcon, ArrowUpIcon, LockClosedIcon, CheckCircledIcon, CircleIcon, CrossCircledIcon, QuestionMarkCircledIcon, StopwatchIcon } from "@radix-ui/react-icons";
+import { GearIcon } from "@/components/svgs/gear-icon";
+import { KeyIcon } from "@/components/svgs/key-icon";
+import { PackageIcon } from "@/components/svgs/package-icon";
 
 const navMenuItem = [
-	// {
-	// 	id: 1,
-	// 	name: "Pengumuman",
-	// 	icon: "bx bx-party",
-	// 	href: "/admin/pengumuman",
-	// },
 	{
 		id: 1,
 		name: "RKKS",
-		icon: "bx bx-package",
-		href: "/admin/rkks",
+		icon: <PackageIcon className='m-2.5 size-9 fill-primary-500' />,
+		slug: "/admin/rkks",
 	},
-	// {
-	// 	id: 3,
-	// 	name: "Test",
-	// 	icon: "bx bx-buildings",
-	// 	href: "/admin/testing",
-	// },
-	// {
-	// 	id: 4,
-	// 	name: "Penyedia",
-	// 	icon: "bx bx-donate-blood",
-	// 	href: "/admin/penyedia",
-	// },
-	// {
-	// 	id: 5,
-	// 	name: "Tenaga Ahli",
-	// 	icon: "bx bx-id-card",
-	// 	href: "/admin/tenaga-ahli",
-	// },
-	// {
-	// 	id: 6,
-	// 	name: "Peralatan",
-	// 	icon: "bx bx-car",
-	// 	href: "/admin/peralatan",
-	// },
-	// {
-	// 	id: 7,
-	// 	name: "Pengguna",
-	// 	icon: "bx bx-at",
-	// 	href: "/admin/pengguna",
-	// },
+    {
+		id: 2,
+		name: 'Setting',
+		icon: <GearIcon className='m-2.5 size-9 fill-primary-500' />,
+		slug: '/admin/setting',
+	},
+	
 ];
+const PROTECTED_PAGES = ['/admin', '/admin/rkks'];
 
-export { navMenuItem };
+export { navMenuItem, PROTECTED_PAGES };
