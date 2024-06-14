@@ -9,6 +9,12 @@ const navMenuItem = [
 		icon: <PackageIcon className='m-2.5 size-9 fill-primary-500' />,
 		slug: "/admin/rkks",
 	},
+    // {
+    //     id: 2,
+	// 	name: 'Credential',
+	// 	icon: <KeyIcon className='m-2.5 size-9 fill-primary' />,
+	// 	slug: '/admin/credential',
+    // },
     {
 		id: 2,
 		name: 'Setting',
