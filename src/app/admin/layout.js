@@ -13,7 +13,7 @@ export default async function AdminLayout({ children }) {
 	return (
 		<SessionProvider>
 			{session && <Sidebar />}
-			<div className='flex w-full flex-1 flex-col justify-center gap-5 border-l p-8 sm:flex-row'>{children}</div>
+			<div className='flex w-full flex-1 flex-col justify-center gap-5 border-l p-4 sm:flex-row'>{children}</div>
 		</SessionProvider>
 	);
 }
