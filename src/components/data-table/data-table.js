@@ -112,6 +112,13 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
         }
     };
 
+    const sanitizeColumnValue = (key, value) => {
+        if (['tahun_anggaran', 'kode_satker', 'kode_kegiatan'].includes(key)) {
+            return value.toString().replace(/\./g, '');
+        }
+        return value;
+    };
+
     return (
         <>
             <DataTableToolbar
@@ -171,25 +178,13 @@ function DataTable({ filterFocus, searchPlaceholder, filters }) {
                                                                 <Tooltip>
                                                                     <TooltipTrigger asChild>
                                                                         <p className='w-full truncate'>
-                                                                            {key === 'tahun_anggaran, kode_kegiatan'
-                                                                                ? item[key].toString().replace('.', '')
-                                                                                : item[key] && isNaN(item[key])
-                                                                                    ? item[key]
-                                                                                    : key.includes('persen')
-                                                                                        ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%`
-                                                                                        : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
+                                                                            {sanitizeColumnValue(key, item[key])}
                                                                         </p>
                                                                     </TooltipTrigger>
                                                                     <TooltipContent align='start'>
                                                                         <span>
                                                                             <Badge className={`whitespace-normal px-1 ${item[key] && item[key].length > 20 ? 'w-40' : 'w-full'}`}>
-                                                                                {key === 'tahun_anggaran, kode_kegiatan'
-                                                                                    ? item[key].toString().replace('.', '')
-                                                                                    : item[key] && isNaN(item[key])
-                                                                                        ? item[key]
-                                                                                        : key.includes('persen')
-                                                                                            ? `${Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}%`
-                                                                                            : Number(item[key]).toLocaleString('de-DE').replace(/,/g, '.')}
+                                                                                {sanitizeColumnValue(key, item[key])}
                                                                             </Badge>
                                                                         </span>
                                                                     </TooltipContent>
