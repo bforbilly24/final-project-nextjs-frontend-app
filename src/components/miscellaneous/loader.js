@@ -8,4 +8,14 @@ function Loader() {
 	);
 }
 
-export { Loader };
+// Loader Component
+function LoaderUpload() {
+    return (
+        <div className="flex items-center justify-center gap-x-5">
+            <ReloadIcon className="animate-spin h-8 w-8 text-gray-800" />
+            <p className="text-base">Tunggu sebentar, Data sedang diproses...</p>
+        </div>
+    );
+}
+
+export { Loader, LoaderUpload };
