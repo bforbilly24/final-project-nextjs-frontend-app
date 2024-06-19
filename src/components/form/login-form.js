@@ -86,7 +86,7 @@ function LoginForm() {
                         </div>
                     </form>
 
-                    <div className='relative'>
+                    {/* <div className='relative'>
                         <div className='absolute inset-0 flex items-center'>
                             <span className='w-full border-t'></span>
                         </div>
@@ -99,7 +99,7 @@ function LoginForm() {
                             <GoogleIcon />
                             <div>Google</div>
                         </div>
-                    </Button>
+                    </Button> */}
                 </div>
             </div>
         </div>
