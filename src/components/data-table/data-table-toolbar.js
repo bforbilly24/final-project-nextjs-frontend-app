@@ -1,7 +1,7 @@
 // src/components/data-table/data-table-toolbar.js
 'use client';
 
-import { Cross2Icon, UploadIcon, FileIcon, ExclamationTriangleIcon, CheckIcon } from '@radix-ui/react-icons';
+import { Cross2Icon, UploadIcon, FileIcon, ExclamationTriangleIcon, CheckIcon, ReloadIcon } from '@radix-ui/react-icons';
 import { Button } from '../shadcn/ui/button';
 import { Input } from '../shadcn/ui/input';
 import { useRef, useState, useEffect } from 'react';
@@ -12,7 +12,16 @@ import { useSession } from 'next-auth/react';
 import { DataTableViewOptions } from './data-table-view-options';
 import { DataTableFacetedFilter } from './data-table-faceted-filter';
 
-async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, token) {
+// Loader Component
+function Loader() {
+    return (
+        <div className="fixed inset-0 flex items-center justify-center bg-gray-100 bg-opacity-75 z-50">
+            <ReloadIcon className="animate-spin h-8 w-8 text-gray-800" />
+        </div>
+    );
+}
+
+async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, token, setIsLoading) {
     const file = event.target.files[0];
     if (file) {
         if (file.type !== 'text/xml' && file.type !== 'application/xml') {
@@ -26,6 +35,8 @@ async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessa
         const formData = new FormData();
         formData.append('xml_file', file);
 
+        setIsLoading(true); // Start loading
+
         try {
             const response = await axios.post(`${apiUrl}/upload-xml`, formData, {
                 headers: {
@@ -36,22 +47,24 @@ async function handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessa
 
             if (response.status === 200) {
                 setAlertType('success');
-                setAlertMessage('File XML uploaded successfully.');
+                setAlertMessage('File XML berhasil diupload.');
                 fetchData(); // Re-fetch data on successful upload
                 setDataUploaded(true);
             } else {
                 setAlertType('error');
-                setAlertMessage('Failed to upload XML file');
+                setAlertMessage('Gagal untuk mengupload file XML.');
             }
             setAlertOpen(true);
         } catch (error) {
             setAlertType('error');
             if (error.response && error.response.data && error.response.data.message) {
-                setAlertMessage(`File upload failed: ${error.response.data.message}`);
+                setAlertMessage(`Gagal upload file: ${error.response.data.message}`);
             } else {
-                setAlertMessage('File upload failed: An unexpected error occurred');
+                setAlertMessage('Gagal upload file: Terjadi kesalahan yang tidak terduga');
             }
             setAlertOpen(true);
+        } finally {
+            setIsLoading(false); // End loading
         }
 
         event.target.value = '';
@@ -84,6 +97,7 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
     const [alertMessage, setAlertMessage] = useState('');
     const [uploadDisabled, setUploadDisabled] = useState(true);
     const [exportExcelDisabled, setExportExcelDisabled] = useState(true);
+    const [isLoading, setIsLoading] = useState(false); // Add loading state
 
     useEffect(() => {
         checkServerStatus(apiUrl, setUploadDisabled, setExportExcelDisabled);
@@ -136,7 +150,7 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
                     <UploadIcon className='mr-2 h-4 w-4' />
                     Upload file .xml
                 </Button>
-                <input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={(event) => handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, session.accessToken)} />
+                <input type='file' accept='.xml' style={{ display: 'none' }} ref={fileInputRef} onChange={(event) => handleFileUpload(event, setAlertOpen, setAlertType, setAlertMessage, fetchData, setDataUploaded, session.accessToken, setIsLoading)} />
 
                 <Button onClick={exportToExcel} className='h-8 px-3' disabled={exportExcelDisabled || !dataUploaded || error}>
                     <FileIcon className='mr-2 h-4 w-4' />
@@ -166,6 +180,8 @@ function DataTableToolbar({ data, fetchData, filterFocus, searchPlaceholder, fil
                     </AlertDialogContent>
                 </AlertDialog>
             </div>
+
+            {isLoading && <Loader />} {/* Show loader when loading */}
         </div>
     );
 }
