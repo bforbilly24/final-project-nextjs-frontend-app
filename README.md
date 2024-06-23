@@ -2,13 +2,25 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
->
-1. Pull in terminal
+> 1. Pull in terminal
+
 ```
 git clone https://github.com/bforbilly24/final-project-nextjs-frontend-app.git
 ```
->
-2.Installation
+
+> 2. Installation
+
+```bash
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
+```
+> 3. Compile
+
 ```bash
 npm run dev
 # or
